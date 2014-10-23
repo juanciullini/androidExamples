@@ -1,6 +1,7 @@
 package com.june.geoquiz;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -13,6 +14,7 @@ public class QuizActivity extends Activity {
 	
 	private Button mTrueBotton;
 	private Button mFalseBotton;
+	private Button mCheatBotton;
 	private ImageButton mNextButton;
 	private ImageButton mPrevButton;
 	private TextView mQuestionTextView;
@@ -54,6 +56,7 @@ public class QuizActivity extends Activity {
 		
 		mTrueBotton = (Button)super.findViewById(R.id.true_button);
 		mFalseBotton = (Button)super.findViewById(R.id.false_button);
+		mCheatBotton  = (Button)super.findViewById(R.id.cheat_button);
 		mNextButton = (ImageButton)super.findViewById(R.id.next_button);
 		mPrevButton = (ImageButton)super.findViewById(R.id.prev_button);
 		
@@ -103,6 +106,17 @@ public class QuizActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				checkAnswer(false);
+				
+			}
+		});
+		
+		mCheatBotton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// Start cheat activity
+				Intent intent = new Intent(QuizActivity.this, CheatActivity.class);
+				startActivity(intent);
 				
 			}
 		});
