@@ -3,6 +3,7 @@ package com.june.geoquiz;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -18,6 +19,7 @@ public class QuizActivity extends Activity {
 	private ImageButton mNextButton;
 	private ImageButton mPrevButton;
 	private TextView mQuestionTextView;
+	private boolean mIsCheater;
 	
 	private TrueFalse[] mQuestionBank = new TrueFalse[] {
 			new TrueFalse(R.string.question_oceans, true),
@@ -38,15 +40,28 @@ public class QuizActivity extends Activity {
 		boolean answerIsTrue = mQuestionBank[mCurrentIndex].isTrueQuestion();
 		
 		int messageResId = 0;
-		
-		if (userPressedTrue == answerIsTrue) {
-			messageResId = R.string.correct_toast;
+		Log.d("TAG", String.valueOf(mIsCheater));
+		if (mIsCheater) {
+			messageResId = R.string.judgment_toast;
 		} else {
-			messageResId = R.string.incorrect_toast;
+			if (userPressedTrue == answerIsTrue) {
+				messageResId = R.string.correct_toast;
+			} else {
+				messageResId = R.string.incorrect_toast;
+			}
 		}
 		
 		Toast.makeText(this, messageResId, Toast.LENGTH_SHORT).show();
 		
+	}
+	
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (data == null) {
+			return;
+			}
+			mIsCheater = data.getBooleanExtra(CheatActivity.EXTRA_ANSWER_SHOWN, false);
 	}
 	
 	@Override
@@ -68,6 +83,7 @@ public class QuizActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.length;
+				mIsCheater = false;
 				updateQuestion();
 				
 			}
@@ -78,6 +94,7 @@ public class QuizActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				mCurrentIndex = ((mQuestionBank.length - 1) - mCurrentIndex) % mQuestionBank.length;
+				mIsCheater = false;
 				updateQuestion();
 				
 			}
@@ -97,6 +114,7 @@ public class QuizActivity extends Activity {
 			@Override
 			public void onClick(View arg0) {
 				mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.length;
+				mIsCheater = false;
 				updateQuestion();
 			}
 		});
@@ -116,6 +134,8 @@ public class QuizActivity extends Activity {
 			public void onClick(View v) {
 				// Start cheat activity
 				Intent intent = new Intent(QuizActivity.this, CheatActivity.class);
+				boolean answerIsTrue = mQuestionBank[mCurrentIndex].isTrueQuestion();
+				intent.putExtra(CheatActivity.EXTRA_ANSWER_IS_TRUE, answerIsTrue);
 				startActivity(intent);
 				
 			}
